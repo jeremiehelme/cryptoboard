@@ -69,6 +69,26 @@ export default function Home() {
 
   }
 
+
+  const connectAPI = async () => {
+
+    var ccxt = require('ccxt')
+    console.log(ccxt.exchanges) // print all available exchanges
+
+
+    const exchangeId = 'binance'
+      , exchangeClass = ccxt[exchangeId]
+      , binance = new exchangeClass({
+        'apiKey': 'iinH3WV4oo0kDql4wQe6rHZ73OkYTt8SG9s51ILdAUtPXYfwaWfOegnm9q4YInx8',
+        'secret': 'xV0raq2VZWGIgdtUpXKisz2ngX21Wl0JK390ZwA7iBQxt95Xv6dFHYEV5cTXMNVa',
+      })
+
+
+    console.log(binance.id, await binance.loadMarkets())
+
+
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -80,11 +100,11 @@ export default function Home() {
       <main className="flex flex-col justify-center items-center gap-y-10 p-12">
         <h1 className="text-5xl font-bold underline">Crypto Board</h1>
 
-        <Link href="/currency/currency">
+        <Link href="/">
           <a>this currency</a>
         </Link>
 
-        <button onClick={fetchData}>Make API call</button>
+        <button onClick={connectAPI}>Make API call</button>
       </main>
 
       <footer className={styles.footer}></footer>
