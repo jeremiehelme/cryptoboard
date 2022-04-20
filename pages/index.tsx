@@ -9,7 +9,7 @@ const fetcher = url => axios.get(url).then(res => res.data)
 
 export default function Home() {
 
-  const { data, error } = useSwr('/api/binance', fetcher)
+  const { data, error } = useSwr('./api/binance', fetcher)
 
 
   if (error) return <div>Failed to load currencies</div>
