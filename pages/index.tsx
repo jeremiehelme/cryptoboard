@@ -2,92 +2,25 @@ import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
 import axios from "axios";
+import useSwr from 'swr'
+
+
+const fetcher = url => axios.get(url).then(res => res.data)
 
 export default function Home() {
 
-  const fetchData = async () => {
-    /* try {
-      const data = await axios.get(
-        "https://api.binance.com/api/v3/klines", {
-        params: {
-          symbol: 'BTCUSDT',
-          interval: '15m'
-        },
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      }
-      );
-      console.log(data)
-
-    } catch (error) {
-      console.error(error);
-
-    } */
+  const { data, error } = useSwr('/api/binance', fetcher)
 
 
+  if (error) return <div>Failed to load currencies</div>
+  if (!data) return <div>Loading...</div>
+
+  let currencies = [];
+  Object.keys(data["total"]).filter(currency => data[currency].total !== 0).forEach((currency) => {
+    currencies.push({ datas: data[currency], name: currency })
+  })
 
 
-    var burl = "https://api.binance.com";
-    var endPoint = "/api/v3/account";
-    var dataQueryString = "timestamp=" + Date.now();
-    var keys = {
-      "APIkey": 'iinH3WV4oo0kDql4wQe6rHZ73OkYTt8SG9s51ILdAUtPXYfwaWfOegnm9q4YInx8',
-      "SECRETkey": 'xV0raq2VZWGIgdtUpXKisz2ngX21Wl0JK390ZwA7iBQxt95Xv6dFHYEV5cTXMNVa'
-    }
-
-    var createHmac = require('create-hmac')
-    var hmac = createHmac('sha256', keys['SECRETkey'])
-    hmac.update('dataQueryString') //optional encoding parameter
-
-
-
-    var signature = hmac.digest('hex'); // crypto.createHmac('sha256', keys['SECRETkey']).update(dataQueryString).digest('hex');
-    var url = burl + endPoint + '?' + dataQueryString + '&signature=' + signature;
-
-
-    try {
-      const data = await axios.get(
-        url, {
-        params: {
-          symbol: 'BTCUSDT',
-          interval: '15m'
-        },
-        headers: {
-          Accept: 'application/json',
-          'X-MBX-APIKEY': keys['APIkey']
-        }
-      }
-      );
-      console.log(data)
-
-    } catch (error) {
-      console.error(error);
-
-    }
-
-  }
-
-
-  const connectAPI = async () => {
-
-    var ccxt = require('ccxt')
-    console.log(ccxt.exchanges) // print all available exchanges
-
-
-    const exchangeId = 'binance'
-      , exchangeClass = ccxt[exchangeId]
-      , binance = new exchangeClass({
-        'apiKey': 'iinH3WV4oo0kDql4wQe6rHZ73OkYTt8SG9s51ILdAUtPXYfwaWfOegnm9q4YInx8',
-        'secret': 'xV0raq2VZWGIgdtUpXKisz2ngX21Wl0JK390ZwA7iBQxt95Xv6dFHYEV5cTXMNVa',
-      })
-
-
-    console.log(binance.id, await binance.loadMarkets())
-
-
-  }
 
   return (
     <div className={styles.container}>
@@ -99,12 +32,13 @@ export default function Home() {
 
       <main className="flex flex-col justify-center items-center gap-y-10 p-12">
         <h1 className="text-5xl font-bold underline">Crypto Board</h1>
-
-        <Link href="/">
-          <a>this currency</a>
-        </Link>
-
-        <button onClick={connectAPI}>Make API call</button>
+        <ul>
+          {currencies.map((currency) => (
+            <li key={currency.name}>
+              {currency.name} : {currency.datas.total}
+            </li>
+          ))}
+        </ul>
       </main>
 
       <footer className={styles.footer}></footer>
