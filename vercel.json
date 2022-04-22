@@ -1,3 +1,8 @@
 {
-
+  "functions": {
+    "api/portfolio.tsx": {
+      "memory": 3008,
+      "maxDuration": 30
+    }
+  }
 }
