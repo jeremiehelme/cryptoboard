@@ -1,5 +1,5 @@
 
-import { Currency } from '../../model/Currency'
+import { Currency } from 'model/Currency'
 
 export default async function binance(req, res) {
   try {

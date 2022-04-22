@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import DataTable from 'react-data-table-component';
-import { Currency } from '../model/Currency'
+import { Currency } from 'model/Currency'
 
 type MyProps = { currencies: Currency[], columns: any[] };
 

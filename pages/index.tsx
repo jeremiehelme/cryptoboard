@@ -1,10 +1,10 @@
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
+import styles from "styles/Home.module.css";
 import axios from "axios";
 import { Component } from 'react'
 
-import CurrencyTable from '../components/CurrencyTable'
-import { Currency } from '../model/Currency'
+import CurrencyTable from 'components/CurrencyTable'
+import { Currency } from 'model/Currency'
 
 
 type State = { currencies: Currency[], funds: number, invested: number, gains: number, invests: object };
