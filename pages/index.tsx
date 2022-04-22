@@ -4,8 +4,11 @@ import axios from "axios";
 import { Component } from 'react'
 
 import CurrencyTable from '../components/CurrencyTable'
+import { Currency } from '../model/Currency'
 
-class Home extends Component {
+
+type State = { currencies: Currency[], funds: number, invested: number, gains: number, invests: object };
+class Home extends Component<{}, State> {
 
   constructor(props) {
     super(props);

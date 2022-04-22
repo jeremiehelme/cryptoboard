@@ -1,10 +1,11 @@
 import { Component } from 'react'
 import DataTable from 'react-data-table-component';
+import { Currency } from '../model/Currency'
+
+type MyProps = { currencies: Currency[], columns: any[] };
 
 
-
-
-class CurrencyTable extends Component {
+class CurrencyTable extends Component<MyProps, {}>  {
 
   constructor(props) {
     super(props);
@@ -15,7 +16,7 @@ class CurrencyTable extends Component {
     const { currencies, columns } = this.props;
 
     return (
-      currencies.length > 0 && (
+      this.props.currencies.length > 0 && (
 
         <DataTable
           columns={columns}
