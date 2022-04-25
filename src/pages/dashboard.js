@@ -1,10 +1,10 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import Head from 'next/head'
-import Axios from 'axios'
+import FRONT_API from 'axios'
+import BACK_API from '@/lib/axios'
 import { Component } from 'react'
 
 import CurrencyTable from 'components/CurrencyTable'
-
 
 export default class Dashboard extends Component {
     constructor(props) {
@@ -36,8 +36,11 @@ export default class Dashboard extends Component {
     }
 
     async loadData() {
-        console.log('load datas')
-        let data = await Axios.get('api/portfolio').then(res => res.data)
+        //get user exchanges
+        let exchanges = await BACK_API.get('api/exchange').then(res => res.data)
+        let data = await FRONT_API.get('api/portfolio', {
+            params: exchanges,
+        }).then(res => res.data)
 
         if (data && data.hasOwnProperty('currencies')) {
             let fund = 0

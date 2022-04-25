@@ -2,15 +2,19 @@ import { Currency } from 'model/Currency'
 
 export default async function portfolio(req, res) {
     try {
-        
+        if (Object.keys(req.query).length == 0) {
+            return res.status(500).end('no exchanges')
+        }
+
         var ccxt = require('ccxt')
-        const exchangeId = 'binance',
+
+        const exchangeData = JSON.parse(req.query[0])
+
+        const exchangeId = exchangeData.exchange_id,
             exchangeClass = ccxt[exchangeId],
             exchange = new exchangeClass({
-                apiKey:
-                    'iinH3WV4oo0kDql4wQe6rHZ73OkYTt8SG9s51ILdAUtPXYfwaWfOegnm9q4YInx8',
-                secret:
-                    'xV0raq2VZWGIgdtUpXKisz2ngX21Wl0JK390ZwA7iBQxt95Xv6dFHYEV5cTXMNVa',
+                apiKey: exchangeData.api_key,
+                secret: exchangeData.secret_key,
             })
 
         await exchange.loadMarkets()
