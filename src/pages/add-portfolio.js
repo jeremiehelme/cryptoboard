@@ -14,18 +14,14 @@ const addPortfolio = () => {
     const { user } = useAuth({ middleware: 'guest' })
 
     const [name, setName] = useState('')
-    const [exchange_id, setExchangeId] = useState('')
-    const [api_key, setApiKey] = useState('')
-    const [secret_key, setSecretKey] = useState('')
+    const [value_invested, setvalueInvested] = useState('')
     const [errors, setErrors] = useState([])
 
     const submitForm = event => {
         event.preventDefault()
         addNewPortfolio({
             name,
-            exchange_id,
-            api_key,
-            secret_key,
+            value_invested,
             user_id: user?.id,
             setErrors,
         })
@@ -65,10 +61,20 @@ const addPortfolio = () => {
                             autoFocus
                         />
                     </div>
+                    {/* Name */}
+                    <div>
+                        <Label htmlFor="value_invested">Value invested</Label>
 
-                
-
-                
+                        <Input
+                            id="name"
+                            type="text"
+                            value={value_invested}
+                            className="block mt-1 w-full"
+                            onChange={event => setvalueInvested(event.target.value)}
+                            required
+                            autoFocus
+                        />
+                    </div>
 
                     <div className="flex items-center justify-between mt-4">
                         <Link href="/dashboard">

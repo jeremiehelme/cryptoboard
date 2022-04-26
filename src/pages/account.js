@@ -10,6 +10,7 @@ export default class Account extends Component {
         super(props)
         this.loadData = this.loadData.bind(this)
         this.state = {
+            portfolios: [],
             exchanges: [],
         }
     }
@@ -19,8 +20,9 @@ export default class Account extends Component {
     }
 
     async loadData() {
-        let data = await axios.get('api/exchange').then(res => res.data)
-        this.setState({ exchanges: data })
+        const portfolios = await axios.get('api/portfolio').then(res => res.data)
+        const exchanges = await axios.get('api/exchange').then(res => res.data)
+        this.setState({ exchanges, portfolios })
     }
 
     render() {
@@ -43,7 +45,7 @@ export default class Account extends Component {
                             </div>
                             <div className="p-6 bg-white border-b border-gray-200 flex flex-row gap-x-5">
                                 <CryptoTable
-                                    data={this.state.exchanges}
+                                    data={this.state.portfolios}
                                     columns={[
                                         {
                                             name: 'ID',
@@ -56,8 +58,8 @@ export default class Account extends Component {
                                             sortable: true,
                                         },
                                         {
-                                            name: 'API Key',
-                                            selector: row => row.api_key,
+                                            name: 'Invested',
+                                            selector: row => row.value_invested,
                                             sortable: true,
                                         },
                                         {
