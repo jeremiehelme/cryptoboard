@@ -6,11 +6,14 @@ import Head from 'next/head'
 import Input from '@/components/Input'
 import Label from '@/components/Label'
 import Link from 'next/link'
+
 import { useState } from 'react'
 import { useAuth } from '@/hooks/auth'
 
+import FRONT_API from 'axios'
+import BACK_API from '@/lib/axios'
+
 const addExchange = () => {
-    const { addNewExchange } = useAuth()
     const { user } = useAuth({ middleware: 'guest' })
 
     const [name, setName] = useState('')
@@ -21,13 +24,57 @@ const addExchange = () => {
 
     const submitForm = event => {
         event.preventDefault()
-        addNewExchange({
+        //Create exchange in BO
+        BACK_API.post('/api/exchange', {
             name,
             exchange_id,
             api_key,
             secret_key,
             user_id: user?.id,
-            setErrors,
+        })
+            .then(res => {
+                loadCurrencies(res.data[0])
+            })
+            .catch(error => {
+                if (error.response.status !== 422) throw error
+            })
+    }
+
+    const loadCurrencies = async exchange => {
+        //Load currencies from Exchange
+        let exchangeDatas = await FRONT_API.get('api/exchange', {
+            params: [exchange],
+        }).then(res => res.data)
+
+        //Create currencies in BO
+        let promises = []
+        exchangeDatas.currencies.forEach(currency => {
+            let req = BACK_API.post('api/currency', {
+                symbol: currency.name,
+            }).then(res => res.data)
+            promises.push(req)
+        })
+        Promise.all(promises).then((...result) => {
+            //Create exchange_currencies relation in BO
+            promises = []
+            exchangeDatas.currencies.forEach(currency => {
+                //Search created currency with symbol
+                const createdCurrency = result[0].find(
+                    element => element[0].symbol === currency.name,
+                )
+                if (createdCurrency) {
+                    console.log(createdCurrency[0], currency)
+                    let req = BACK_API.post('api/exchange_currencies', {
+                        currency_id: createdCurrency[0].id,
+                        exchange_id: exchange.id,
+                        quantity: currency.total,
+                    }).then(res => res.data)
+                    promises.push(req)
+                }
+            })
+            Promise.all(promises).then((...result) => {
+                //Currencies updated from exchange
+            })
         })
     }
 

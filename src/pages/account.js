@@ -3,7 +3,8 @@ import Head from 'next/head'
 import axios from '@/lib/axios'
 import { Component } from 'react'
 import Link from 'next/link'
-import CryptoTable from 'components/CryptoTable'
+import Button from '@/components/Button'
+import CryptoTable from '@/components/CryptoTable'
 
 export default class Account extends Component {
     constructor(props) {
@@ -20,7 +21,9 @@ export default class Account extends Component {
     }
 
     async loadData() {
-        const portfolios = await axios.get('api/portfolio').then(res => res.data)
+        const portfolios = await axios
+            .get('api/portfolio')
+            .then(res => res.data)
         const exchanges = await axios.get('api/exchange').then(res => res.data)
         this.setState({ exchanges, portfolios })
     }
@@ -39,7 +42,7 @@ export default class Account extends Component {
 
                 <div className="py-12">
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-y-5">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white shadow-sm sm:rounded-lg">
                             <div className="p-6 bg-white border-b border-gray-200 flex flex-row gap-x-5">
                                 Portfolios
                             </div>
@@ -71,11 +74,11 @@ export default class Account extends Component {
                             </div>
                             <div className="p-6 bg-white border-b border-gray-200 flex flex-row justify-end gap-x-5">
                                 <Link href="/add-portfolio">
-                                    <button>Add a portfolio</button>
+                                    <Button>Create a portfolio</Button>
                                 </Link>
                             </div>
                         </div>
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="bg-white shadow-sm sm:rounded-lg">
                             <div className="p-6 bg-white border-b border-gray-200 flex flex-row gap-x-5">
                                 Connected Exchanges
                             </div>
@@ -107,7 +110,7 @@ export default class Account extends Component {
                             </div>
                             <div className="p-6 bg-white border-b border-gray-200 flex flex-row justify-end gap-x-5">
                                 <Link href="/add-exchange">
-                                    <button>Add Exchange</button>
+                                    <Button>Connect an Exchange</Button>
                                 </Link>
                             </div>
                         </div>
