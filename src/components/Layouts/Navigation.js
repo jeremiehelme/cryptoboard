@@ -77,7 +77,7 @@ const Navigation = ({ user }) => {
                             <DropdownButton>
                                 <Link href="/account">Compte</Link>
                             </DropdownButton>
-                            <div class="w-full h-px bg-slate-100"></div>
+                            <div className="w-full h-px bg-slate-100"></div>
                             <DropdownButton onClick={logout}>
                                 Logout
                             </DropdownButton>

@@ -39,7 +39,7 @@ const Login = () => {
     }
 
     return (
-        <GuestLayout>
+        <div className="bg-gray-100 flex flex-col items-center justify-center min-h-screen ">
             <AuthCard
                 logo={
                     <Link href="/">
@@ -48,7 +48,6 @@ const Login = () => {
                         </a>
                     </Link>
                 }>
-
                 {/* Session Status */}
                 <AuthSessionStatus className="mb-4" status={status} />
 
@@ -115,7 +114,7 @@ const Login = () => {
                     </div>
                 </form>
             </AuthCard>
-        </GuestLayout>
+        </div>
     )
 }
 
