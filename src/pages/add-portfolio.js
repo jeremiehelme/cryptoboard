@@ -18,18 +18,19 @@ const addPortfolio = () => {
     const [name, setName] = useState('')
     const [value_invested, setvalueInvested] = useState('')
     const [exchanges, setExchanges] = useState([])
-    const [currencies, setCurrencies] = useState([])
     const [options, setOptions] = useState([])
     const [errors, setErrors] = useState([])
     const [selected, setSelected] = useState([])
 
     const submitForm = event => {
         event.preventDefault()
-
         BACK_API.post('/api/portfolio', {
             name,
             value_invested,
             user_id: user?.id,
+            currencies: selected.map(item => {
+                return item.value
+            }),
         })
             .then(() => {
                 console.log('ok')
@@ -55,7 +56,6 @@ const addPortfolio = () => {
                         value: currency.symbol,
                     })
                 })
-                setCurrencies(tmpCurr)
                 setOptions(tmpOpt)
             })
             .catch(error => {
