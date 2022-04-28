@@ -10,29 +10,27 @@ export default class Dashboard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            currencies: [],
+            portfolios: null,
             funds: 0,
             invested: 0,
             gains: 0,
-            invests: {
-                ETH: 835,
-                EGLD: 192,
-                ATOM: 150,
-                BNB: 125,
-                ENJ: 155,
-                COTI: 100,
-                KDA: 100,
-                DYDX: 50,
-                ERN: 50,
-                NEAR: 50,
-                SOL: 0,
-            },
+            
         }
         this.loadData = this.loadData.bind(this)
     }
 
     componentDidMount() {
-        this.loadData()
+        //this.loadData()
+        this.loadPortfolio()
+    }
+
+    async loadPortfolio() {
+        const portfolios = await BACK_API.get('api/portfolio').then(
+            res => res.data,
+        )
+        if (portfolios.length > 0) {
+            this.setState({ portfolios: portfolios })
+        }
     }
 
     async loadData() {
@@ -72,6 +70,54 @@ export default class Dashboard extends Component {
     }
 
     render() {
+        let portofliosItems = this.state.portfolios?.map(portfolio => {
+            console.log(portfolio)
+            return (
+                <>
+                    <div className="bg-white shadow-sm sm:rounded-lg">
+                        <div className="p-6 bg-white border-b border-gray-200 flex flex-row gap-x-5">
+                            <div>
+                                Invested value :{portfolio?.value_invested}$
+                            </div>
+                        </div>
+                        <CurrencyTable
+                            currencies={portfolio.currencies}
+                            columns={[
+                                {
+                                    name: 'Name',
+                                    selector: row => row.symbol,
+                                    sortable: true,
+                                },
+                                {
+                                    name: 'Quantity',
+                                    selector: row => row.total,
+                                    sortable: true,
+                                },
+                                {
+                                    name: 'Daily average price',
+                                    selector: row => row.average,
+                                    sortable: true,
+                                },
+                                {
+                                    name: 'Current value',
+                                    selector: row => row.value,
+                                    sortable: true,
+                                },
+                                {
+                                    name: 'Value Invested',
+                                    selector: row => row.invest,
+                                    sortable: true,
+                                },
+                                {
+                                    name: 'Gain',
+                                    selector: row => row.gain,
+                                    sortable: true,
+                                },
+                            ]}></CurrencyTable>
+                    </div>
+                </>
+            )
+        })
         return (
             <AppLayout
                 header={
@@ -85,51 +131,7 @@ export default class Dashboard extends Component {
 
                 <div className="py-12">
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-y-5">
-                        <div className="bg-white shadow-sm sm:rounded-lg">
-                            <div className="p-6 bg-white border-b border-gray-200 flex flex-row gap-x-5">
-                                <div>Current value : {this.state.funds}$</div>
-                                <div>
-                                    Invested value : {this.state.invested}$
-                                </div>
-                                <div>gains : {this.state.gains}$</div>
-                            </div>
-                        </div>
-                        <div className="bg-white shadow-sm sm:rounded-lg">
-                            <CurrencyTable
-                                currencies={this.state.currencies}
-                                columns={[
-                                    {
-                                        name: 'Name',
-                                        selector: row => row.name,
-                                        sortable: true,
-                                    },
-                                    {
-                                        name: 'Quantity',
-                                        selector: row => row.total,
-                                        sortable: true,
-                                    },
-                                    {
-                                        name: 'Average',
-                                        selector: row => row.average,
-                                        sortable: true,
-                                    },
-                                    {
-                                        name: 'Value',
-                                        selector: row => row.value,
-                                        sortable: true,
-                                    },
-                                    {
-                                        name: 'Invest',
-                                        selector: row => row.invest,
-                                        sortable: true,
-                                    },
-                                    {
-                                        name: 'Gain',
-                                        selector: row => row.gain,
-                                        sortable: true,
-                                    },
-                                ]}></CurrencyTable>
-                        </div>
+                        {portofliosItems}
                     </div>
                 </div>
             </AppLayout>
