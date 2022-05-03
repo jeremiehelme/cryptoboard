@@ -1,5 +1,6 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import Head from 'next/head'
+import Button from '@/components/Button'
 import FRONT_API from 'axios'
 import BACK_API from '@/lib/axios'
 import { Component } from 'react'
@@ -14,13 +15,10 @@ export default class Dashboard extends Component {
             funds: 0,
             invested: 0,
             gains: 0,
-            
         }
-        this.loadData = this.loadData.bind(this)
     }
 
     componentDidMount() {
-        //this.loadData()
         this.loadPortfolio()
     }
 
@@ -33,47 +31,33 @@ export default class Dashboard extends Component {
         }
     }
 
-    async loadData() {
-        //get user exchanges
-        let exchanges = await BACK_API.get('api/exchange').then(res => res.data)
-        let data = await FRONT_API.get('api/portfolio', {
-            params: exchanges,
-        }).then(res => res.data)
-
-        if (data && data.hasOwnProperty('currencies')) {
-            let fund = 0
-            let totalInvested = Object.keys(this.state.invests).reduce(
-                (accumVariable, curValue) => {
-                    return accumVariable + this.state.invests[curValue]
-                },
-                0,
-            )
-
-            data.currencies.forEach(currency => {
-                currency.invest = this.state.invests.hasOwnProperty(
-                    currency.name,
-                )
-                    ? this.state.invests[currency.name]
-                    : 0
-                currency.gain = Math.round(currency.value - currency.invest)
-                fund += currency.value
-            })
-
-            fund = Math.round(fund * 100) / 100
-            this.setState({
-                currencies: data.currencies,
-                funds: fund,
-                invested: totalInvested,
-                gains: Math.round(fund - totalInvested),
-            })
+    async syncTransactions() {
+        const exchanges = await BACK_API.get('api/exchange').then(
+            res => res.data,
+        )
+        if (exchanges.length > 0) {
+            const orders = await FRONT_API.get('api/transactions', {
+                params: exchanges,
+            }).then(res => res.data.orders)
+            if (orders.length > 0) {
+                let count = 0
+                orders.forEach(order => {
+                    console.log(order)
+                    let value =
+                        order.info.side === 'SELL'
+                            ? -order.filled
+                            : order.filled
+                    count += value
+                })
+                console.log(count)
+            }
         }
     }
 
     render() {
-        let portofliosItems = this.state.portfolios?.map(portfolio => {
-            console.log(portfolio)
+        let portofliosItems = this.state.portfolios?.map((portfolio, i) => {
             return (
-                <>
+                <div key={'portfolio-' + i}>
                     <div className="bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200 flex flex-row gap-x-5">
                             <div>
@@ -90,7 +74,7 @@ export default class Dashboard extends Component {
                                 },
                                 {
                                     name: 'Quantity',
-                                    selector: row => row.total,
+                                    selector: row => row.quantity,
                                     sortable: true,
                                 },
                                 {
@@ -115,7 +99,7 @@ export default class Dashboard extends Component {
                                 },
                             ]}></CurrencyTable>
                     </div>
-                </>
+                </div>
             )
         })
         return (
@@ -130,6 +114,13 @@ export default class Dashboard extends Component {
                 </Head>
 
                 <div className="py-12">
+                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-y-5 mb-10">
+                        <div>
+                            <Button onClick={this.syncTransactions}>
+                                Sync Transactions
+                            </Button>
+                        </div>
+                    </div>
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-y-5">
                         {portofliosItems}
                     </div>
