@@ -24,13 +24,15 @@ const addPortfolio = () => {
 
     const submitForm = event => {
         event.preventDefault()
+        const currencies = new Object()
+        selected.map(item => {
+            currencies[item.value] = item.quantity
+        })
         BACK_API.post('/api/portfolio', {
             name,
             value_invested,
             user_id: user?.id,
-            currencies: selected.map(item => {
-                return item.value
-            }),
+            currencies: currencies,
         })
             .then(() => {
                 console.log('ok')
@@ -54,6 +56,7 @@ const addPortfolio = () => {
                     tmpOpt.push({
                         label: currency.symbol,
                         value: currency.symbol,
+                        quantity: currency.quantity,
                     })
                 })
                 setOptions(tmpOpt)
